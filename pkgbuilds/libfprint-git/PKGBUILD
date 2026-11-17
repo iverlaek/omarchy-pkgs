@@ -29,10 +29,16 @@
 # or when the finger lifts, that press is the picture. Enrollment still
 # waits for a full press. The match line stays 8 pairs. The pin above is
 # unchanged. 04f3:0c4b stays on the swipe driver.
+#
+# elanpress-0c3d.patch (local) adds 04f3:0c3d (FeinTech FPS00201) to the
+# press driver and takes it off the swipe driver. Its pad lights a pressed
+# finger more weakly than the pads above, so it also gets a lower pixel-delta
+# threshold through the id table's driver_data; the other press sensors keep
+# the original one.
 
 pkgname=libfprint-git
 pkgver=1.94.100.r10.g6f9479c
-pkgrel=6
+pkgrel=7
 # Retain the epoch used to supersede the previously published untested build.
 epoch=1
 pkgdesc="Library for fingerprint readers (pinned upstream snapshot with FocalTech, Synaptics 06cb:010b and ELAN press sensors, and Apple Touch ID on aarch64)"
@@ -70,6 +76,7 @@ source=(
   "git+https://gitlab.freedesktop.org/libfprint/libfprint.git#commit=6f9479c3d55f847c1b3769f28ceb99227f9858cf"
   "focaltech_moc-add-pid-0xA97A.patch"
   "elanpress.patch"
+  "elanpress-0c3d.patch"
 )
 source_aarch64=(
   "aurora-apple-sep.patch"
@@ -81,6 +88,7 @@ b2sums=(
   'SKIP'
   'SKIP'
   '27c0a11f682f9b852f77958f8c2f9d07cf1d8653e8aa2963463b01cac85ea520bdc9f8c15107e6ee97381f3e3475518a0a3b87105c8fe583258a2e90380466ab'
+  '083e1afb306d366c3cebcb799692a61b3bb4dc8c1eb78b8813361064fe55d80168da644dd4b1cf8279ba81004d633b8fc816c46a419d3c803ab3ecf2afaf137d'
 )
 b2sums_aarch64=(
   'ec577996066baf6db6d741763abd681aae5556d52a8b67f7a52a60a4df7015c5d1edf3637835e563b2fb0edde2499173d61c50717b621f6bddf94a1f700075e5'
@@ -109,6 +117,13 @@ prepare() {
   # on them and enrollment dies with a protocol error.
   if [[ ! -f libfprint/drivers/elanpress.c ]]; then
     patch -p1 < "$srcdir/elanpress.patch"
+  fi
+
+  # 04f3:0c3d is the same kind of pad but lights a finger more weakly; it
+  # joins the press driver with a lower pixel-delta threshold of its own.
+  if ! grep -q '0x0c3d, .driver_data = ELANPRESS_0C3D' \
+       libfprint/drivers/elanpress.h; then
+    patch -p1 < "$srcdir/elanpress-0c3d.patch"
   fi
 
   # Skipped only when every hunk is already in: a tree a failed run left
