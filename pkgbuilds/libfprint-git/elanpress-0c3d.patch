@@ -121,3 +121,21 @@ index ba02d66..903e9da 100644
    {.vid = ELANPRESS_VEND_ID, .pid = 0x0c6e, }, /* 04f3:0c6e Rog Flow x13 etc. */
    {.vid = ELANPRESS_VEND_ID, .pid = 0x0c4f, }, /* 04f3:0c4f Acer Aspire A515-45 */
    {.vid = ELANPRESS_VEND_ID, .pid = 0x0c63, }, /* 04f3:0c63 */
+diff --git i/data/autosuspend.hwdb w/data/autosuspend.hwdb
+--- i/data/autosuspend.hwdb
++++ w/data/autosuspend.hwdb
+@@ -148,7 +148,6 @@
+ usb:v04F3p0C31*
+ usb:v04F3p0C32*
+ usb:v04F3p0C33*
+-usb:v04F3p0C3D*
+ usb:v04F3p0C42*
+ usb:v04F3p0C4B*
+ usb:v04F3p0C4D*
+@@ -179,6 +178,7 @@
+ 
+ # Supported by libfprint driver elanpress
++usb:v04F3p0C3D*
+ usb:v04F3p0C6E*
+ usb:v04F3p0C4F*
+ usb:v04F3p0C63*
